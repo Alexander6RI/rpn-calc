@@ -10,7 +10,7 @@ function MathOp(opName, symbol, args, func) {
 const MATH_OPS = [
     new MathOp("addition", "+", 2, (a, b) => a+b),
     new MathOp("subtraction", "-", 2, (a, b) => a-b),
-    new MathOp("multiplication", ["*", "\u00d7"], 2, (a, b) => {
+    new MathOp("multiplication", ["*", "\u00d7", "x"], 2, (a, b) => {
         if ((a == Infinity && b == 0) || (a == 0 && b == Infinity)) throw new MathError(`cannot multiply ${formatMathematicalNumber(a)} and ${formatMathematicalNumber(b)}`);
         return a*b;
     }),
