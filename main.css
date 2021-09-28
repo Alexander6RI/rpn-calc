@@ -1,0 +1,57 @@
+body {
+    display: flex;
+    flex-direction: column;
+    max-width: 6in;
+    margin: auto;
+    height: 100vh;
+}
+
+#answers {
+    overflow-y: scroll;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#answers, #input {
+    text-align: right;
+    padding-left: 1ch;
+    padding-right: 1ch;
+}
+
+#answers, #input, #keys, #keys button {
+    font-family: 'Times New Roman', Georgia, serif;
+    font-size: 14pt;
+    line-height: 1.5em;
+}
+
+#keys {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: stretch;
+    margin-left: 3ch;
+    margin-right: 3ch;
+}
+
+#keys button {
+    min-width: 2em;
+    min-height: 2em;
+    flex-grow: 1;
+}
+
+#input {
+    margin-left: 3ch;
+    margin-right: 3ch;
+}
+
+#spacer {
+    flex: 1;
+}
+
+.answer:not(:last-of-type) {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+.answer:nth-last-of-type(2) {
+    border-bottom: 1px solid #888888;
+}
