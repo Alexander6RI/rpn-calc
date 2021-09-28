@@ -1,97 +1,113 @@
+class ParseError extends Error { name = "SyntaxError" }
+class MathError extends Error { name = "MathError" }
+
+function MathOp(opName, symbol, args, func) {
+    this.opName = opName;
+    this.symbol = symbol;
+    this.args = args;
+    this.func = func;
+}
+const MATH_OPS = [
+    new MathOp("addition", "+", 2, (a, b) => a+b),
+    new MathOp("subtraction", "-", 2, (a, b) => a-b),
+    new MathOp("multiplication", ["*", "\u00d7"], 2, (a, b) => {
+        if ((a == Infinity && b == 0) || (a == 0 && b == Infinity)) throw new MathError(`cannot multiply ${formatMathematicalNumber(a)} and ${formatMathematicalNumber(b)}`);
+        return a*b;
+    }),
+    new MathOp("division", ["/", "\u00f7"], 2, (a, b) => {
+        if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
+        return a/b;
+    }),
+    new MathOp("factorial", "!", 1, (a) => {
+        if (!Number.isSafeInteger(a) || a < 0) throw new MathError(`cannot find the factorial of ${formatMathematicalNumber(a)}`);
+        var result = 1;
+        var step = a;
+        while (step > 0) {
+            result *= step;
+            step--;
+        }
+        return result;
+    }),
+    new MathOp("exponentiation", ["^", "**"], 2, (a, b) => {
+        return Math.pow(a, b);
+    }),
+    new MathOp("remainder", "%", 2, (a, b) => {
+        if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
+        return a % b;
+    }),
+    new MathOp("modulo", ["mod", "%%"], 2, (a, b) => {
+        if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
+        return ((a % b ) + b ) % b;
+    }),
+    new MathOp("root", "root", 2, (a, b) => {
+        if (b == 0) throw new MathError(`cannot find the 0th root of ${formatMathematicalNumber(a)}`);
+        return Math.pow(a, 1/b);
+    }),
+    new MathOp("square root", ["sqrt", "\u221a"], 1, (a) => {
+        return Math.sqrt(a);
+    }),
+    new MathOp("absolute value", ["|", "abs"], 1, (a) => {
+        return Math.abs(a);
+    }),
+
+    new MathOp("equation", "=", 2, (a, b) => {
+        if (a === b) return 1;
+        else return 0;
+    }),
+    new MathOp("equation", "!=", 2, (a, b) => {
+        if (a !== b) return 1;
+        else return 0;
+    }),
+    new MathOp("comparison", "<", 2, (a, b) => {
+        if (a < b) return 1;
+        else return 0;
+    }),
+    new MathOp("comparison", ">", 2, (a, b) => {
+        if (a > b) return 1;
+        else return 0;
+    }),
+    new MathOp("comparison", "<=", 2, (a, b) => {
+        if (a <= b) return 1;
+        else return 0;
+    }),
+    new MathOp("comparison", ">=", 2, (a, b) => {
+        if (a >= b) return 1;
+        else return 0;
+    }),
+];
+
+function MathConstant(name, symbols, value) {
+    this.name = name;
+    this.symbols = symbols;
+    this.value = value;
+}
+const MATH_CONSTANTS = [
+    new MathConstant("\u03c0", ["pi", "\u03c0"], Math.PI),
+    new MathConstant("\u03c4", ["tau", "\u03c4"], 2*Math.PI),
+    new MathConstant("\u03c6", ["phi", "\u03c6"], (1 + Math.sqrt(5)) / 2),
+    new MathConstant("\u221e", ["infinity", "\u221e"], Infinity),
+    new MathConstant("e", ["e"], Math.E),
+]
+
+function formatMathematicalNumber(value) {
+    for (var constant of MATH_CONSTANTS) {
+        if (value == constant.value) {
+            return constant.name;
+        }
+    }
+    for (var constant of MATH_CONSTANTS) {
+        if (value == -constant.value) {
+            return "-"+constant.name;
+        }
+    }
+    
+    // turn to fixed-length string and back to number so that, for example, 0.30000000000000004 gets converted to 0.3
+    return Number(value.toFixed(8)).toString();
+}
+
 window.addEventListener("load", () => {
 
     const input = document.getElementById("input");
-
-    class ParseError extends Error { name = "SyntaxError" }
-    class MathError extends Error { name = "MathError" }
-
-    function MathOp(opName, symbol, args, func) {
-        this.opName = opName;
-        this.symbol = symbol;
-        this.args = args;
-        this.func = func;
-    }
-    const MATH_OPS = [
-        new MathOp("addition", "+", 2, (a, b) => a+b),
-        new MathOp("subtraction", "-", 2, (a, b) => a-b),
-        new MathOp("multiplication", ["*", "\u00d7"], 2, (a, b) => {
-            if ((a == Infinity && b == 0) || (a == 0 && b == Infinity)) throw new MathError(`cannot multiply ${formatMathematicalNumber(a)} and ${formatMathematicalNumber(b)}`);
-            return a*b;
-        }),
-        new MathOp("division", ["/", "\u00f7"], 2, (a, b) => {
-            if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
-            return a/b;
-        }),
-        new MathOp("factorial", "!", 1, (a) => {
-            if (!Number.isSafeInteger(a) || a < 0) throw new MathError(`cannot find the factorial of ${formatMathematicalNumber(a)}`);
-            var result = 1;
-            var step = a;
-            while (step > 0) {
-                result *= step;
-                step--;
-            }
-            return result;
-        }),
-        new MathOp("exponentiation", ["^", "**"], 2, (a, b) => {
-            return Math.pow(a, b);
-        }),
-        new MathOp("remainder", "%", 2, (a, b) => {
-            if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
-            return a % b;
-        }),
-        new MathOp("modulo", ["mod", "%%"], 2, (a, b) => {
-            if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
-            return ((a % b ) + b ) % b;
-        }),
-        new MathOp("root", "root", 2, (a, b) => {
-            if (b == 0) throw new MathError(`cannot find the 0th root of ${formatMathematicalNumber(a)}`);
-            return Math.pow(a, 1/b);
-        }),
-        new MathOp("square root", ["sqrt", "\u221a"], 1, (a) => {
-            return Math.sqrt(a);
-        }),
-        new MathOp("absolute value", ["|", "abs"], 1, (a) => {
-            return Math.abs(a);
-        }),
-
-        new MathOp("equation", "=", 2, (a, b) => {
-            if (a === b) return 1;
-            else return 0;
-        }),
-        new MathOp("equation", "!=", 2, (a, b) => {
-            if (a !== b) return 1;
-            else return 0;
-        }),
-        new MathOp("comparison", "<", 2, (a, b) => {
-            if (a < b) return 1;
-            else return 0;
-        }),
-        new MathOp("comparison", ">", 2, (a, b) => {
-            if (a > b) return 1;
-            else return 0;
-        }),
-        new MathOp("comparison", "<=", 2, (a, b) => {
-            if (a <= b) return 1;
-            else return 0;
-        }),
-        new MathOp("comparison", ">=", 2, (a, b) => {
-            if (a >= b) return 1;
-            else return 0;
-        }),
-    ];
-
-    function MathConstant(name, symbols, value) {
-        this.name = name;
-        this.symbols = symbols;
-        this.value = value;
-    }
-    const MATH_CONSTANTS = [
-        new MathConstant("\u03c0", ["pi", "\u03c0"], Math.PI),
-        new MathConstant("\u03c4", ["tau", "\u03c4"], 2*Math.PI),
-        new MathConstant("\u03c6", ["phi", "\u03c6"], (1 + Math.sqrt(5)) / 2),
-        new MathConstant("\u221e", ["infinity", "\u221e"], Infinity),
-        new MathConstant("e", ["e"], Math.E),
-    ]
 
     function doTheMath(input) {
         var tokens = input.split(/ /g);
@@ -146,22 +162,6 @@ window.addEventListener("load", () => {
         var thisAnswer = answers[answers.length-1];
         thisAnswer.textContent = output;
         if (ex != undefined && !(ex instanceof MathError || ex instanceof ParseError)) throw ex;
-    }
-
-    function formatMathematicalNumber(value) {
-        for (var constant of MATH_CONSTANTS) {
-            if (value == constant.value) {
-                return constant.name;
-            }
-        }
-        for (var constant of MATH_CONSTANTS) {
-            if (value == -constant.value) {
-                return "-"+constant.name;
-            }
-        }
-        
-        // turn to fixed-length string and back to number so that, for example, 0.30000000000000004 gets converted to 0.3
-        return Number(value.toFixed(8)).toString();
     }
 
     input.addEventListener("input", calcAndDisplay);
