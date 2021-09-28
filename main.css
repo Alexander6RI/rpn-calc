@@ -1,3 +1,17 @@
+@media (prefers-color-scheme: dark) {
+    html, #answers {
+        background-color: #333333;
+        color: #FFFFFF;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    html, #answers {
+        background-color: #FFFFFF;
+        color: #000000;
+    }
+}
+
 body {
     display: flex;
     flex-direction: column;
