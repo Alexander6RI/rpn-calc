@@ -58,6 +58,11 @@ body {
     margin-right: 3ch;
 }
 
+.hidden-but-still-there {
+    position: absolute;
+    transform: scale(0);
+}
+
 #spacer {
     flex: 1;
 }
