@@ -11,11 +11,11 @@ const MATH_OPS = [
     new MathOp("addition", "+", 2, (a, b) => a+b),
     new MathOp("subtraction", "-", 2, (a, b) => a-b),
     new MathOp("multiplication", ["*", "\u00d7", "x"], 2, (a, b) => {
-        if ((a == Infinity && b == 0) || (a == 0 && b == Infinity)) throw new MathError(`cannot multiply ${formatMathematicalNumber(a)} and ${formatMathematicalNumber(b)}`);
+        if ((a == Infinity && b == 0) || (a == 0 && b == Infinity)) throw new MathError(`cannot multiply ${formatMathematicalNumber(a)} by ${formatMathematicalNumber(b)}`);
         return a*b;
     }),
     new MathOp("division", ["/", "\u00f7"], 2, (a, b) => {
-        if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
+        if (b == 0) throw new MathError(`cannot divide by 0`);
         return a/b;
     }),
     new MathOp("factorial", "!", 1, (a) => {
@@ -32,15 +32,15 @@ const MATH_OPS = [
         return Math.pow(a, b);
     }),
     new MathOp("remainder", "%", 2, (a, b) => {
-        if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
+        if (b == 0) throw new MathError(`cannot divide by 0`);
         return a % b;
     }),
     new MathOp("modulo", ["mod", "%%"], 2, (a, b) => {
-        if (b == 0) throw new MathError(`cannot divide ${formatMathematicalNumber(a)} by 0`);
+        if (b == 0) throw new MathError(`cannot divide by 0`);
         return ((a % b ) + b ) % b;
     }),
     new MathOp("root", "root", 2, (a, b) => {
-        if (b == 0) throw new MathError(`cannot find the 0th root of ${formatMathematicalNumber(a)}`);
+        if (b == 0) throw new MathError(`cannot find a 0th root`);
         return Math.pow(a, 1/b);
     }),
     new MathOp("square root", ["sqrt", "\u221a"], 1, (a) => {
